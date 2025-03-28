@@ -1,128 +1,132 @@
-#!/bin/bash
+<?php
+require_once '../config.php';
 
-# رنگ‌ها برای نمایش بهتر
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-NC='\033[0m'
-
-# تابع نمایش پیام
-print_message() {
-    echo -e "${2}${1}${NC}"
+// تابع بررسی دسترسی root
+function checkRoot() {
+    if (posix_getuid() !== 0) {
+        die("لطفاً با دسترسی root اجرا کنید.\n");
+    }
 }
 
-# تابع بررسی دسترسی root
-check_root() {
-    if [ "$EUID" -ne 0 ]; then 
-        print_message "لطفاً با دسترسی root اجرا کنید" "$RED"
-        exit 1
-    fi
+// تابع پشتیبان‌گیری از فایل‌ها
+function backupFiles() {
+    echo "در حال پشتیبان‌گیری از فایل‌ها...\n";
+    
+    $backupDir = BACKUP_PATH . 'updates/';
+    if (!file_exists($backupDir)) {
+        mkdir($backupDir, 0755, true);
+    }
+    
+    $date = date('Y-m-d_H-i-s');
+    $backupFile = $backupDir . "backup_$date.tar.gz";
+    
+    $cmd = "tar -czf $backupFile . --exclude='vendor' --exclude='node_modules' --exclude='cache/*' --exclude='backups/*'";
+    exec($cmd, $output, $returnVar);
+    
+    if ($returnVar !== 0) {
+        die("خطا در پشتیبان‌گیری از فایل‌ها.\n");
+    }
+    
+    echo "پشتیبان‌گیری با موفقیت انجام شد.\n";
 }
 
-# تابع پشتیبان‌گیری از فایل‌ها
-backup_files() {
-    print_message "در حال پشتیبان‌گیری از فایل‌ها..." "$YELLOW"
+// تابع بروزرسانی کد
+function updateCode() {
+    echo "در حال بروزرسانی کد...\n";
     
-    BACKUP_DIR="/var/backups/xui-manager/updates"
-    mkdir -p "$BACKUP_DIR"
+    $cmd = "git pull origin main";
+    exec($cmd, $output, $returnVar);
     
-    DATE=$(date +%Y%m%d_%H%M%S)
-    BACKUP_FILE="$BACKUP_DIR/backup_$DATE.tar.gz"
+    if ($returnVar !== 0) {
+        die("خطا در بروزرسانی کد.\n");
+    }
     
-    tar -czf "$BACKUP_FILE" . --exclude='vendor' --exclude='node_modules'
-    
-    if [ $? -eq 0 ]; then
-        print_message "پشتیبان‌گیری با موفقیت انجام شد" "$GREEN"
-    else
-        print_message "خطا در پشتیبان‌گیری" "$RED"
-        exit 1
-    fi
+    echo "کد با موفقیت بروزرسانی شد.\n";
 }
 
-# تابع بروزرسانی کد
-update_code() {
-    print_message "در حال بروزرسانی کد..." "$YELLOW"
+// تابع بروزرسانی وابستگی‌ها
+function updateDependencies() {
+    echo "در حال بروزرسانی وابستگی‌ها...\n";
     
-    # دریافت آخرین تغییرات از گیت
-    git pull origin main
+    $cmd = "composer update --no-dev";
+    exec($cmd, $output, $returnVar);
     
-    if [ $? -eq 0 ]; then
-        print_message "کد با موفقیت بروزرسانی شد" "$GREEN"
-    else
-        print_message "خطا در بروزرسانی کد" "$RED"
-        exit 1
-    fi
+    if ($returnVar !== 0) {
+        die("خطا در بروزرسانی وابستگی‌ها.\n");
+    }
+    
+    echo "وابستگی‌ها با موفقیت بروزرسانی شدند.\n";
 }
 
-# تابع بروزرسانی وابستگی‌ها
-update_dependencies() {
-    print_message "در حال بروزرسانی وابستگی‌ها..." "$YELLOW"
+// تابع پاکسازی کش
+function clearCache() {
+    echo "در حال پاکسازی کش...\n";
     
-    composer update --no-dev
+    $cacheDir = CACHE_PATH;
+    if (file_exists($cacheDir)) {
+        array_map('unlink', glob("$cacheDir/*.*"));
+    }
     
-    if [ $? -eq 0 ]; then
-        print_message "وابستگی‌ها با موفقیت بروزرسانی شدند" "$GREEN"
-    else
-        print_message "خطا در بروزرسانی وابستگی‌ها" "$RED"
-        exit 1
-    fi
+    echo "کش با موفقیت پاکسازی شد.\n";
 }
 
-# تابع پاکسازی کش
-clear_cache() {
-    print_message "در حال پاکسازی کش..." "$YELLOW"
+// تابع تنظیم دسترسی‌ها
+function setPermissions() {
+    echo "در حال تنظیم دسترسی‌ها...\n";
     
-    rm -rf cache/*
+    $commands = [
+        "chmod -R 755 .",
+        "chmod -R 777 cache/ backups/ logs/"
+    ];
     
-    if [ $? -eq 0 ]; then
-        print_message "کش با موفقیت پاکسازی شد" "$GREEN"
-    else
-        print_message "خطا در پاکسازی کش" "$RED"
-        exit 1
-    fi
+    foreach ($commands as $cmd) {
+        exec($cmd, $output, $returnVar);
+        if ($returnVar !== 0) {
+            die("خطا در تنظیم دسترسی‌ها.\n");
+        }
+    }
+    
+    echo "دسترسی‌ها با موفقیت تنظیم شدند.\n";
 }
 
-# تابع تنظیم دسترسی‌ها
-set_permissions() {
-    print_message "در حال تنظیم دسترسی‌ها..." "$YELLOW"
+// تابع بروزرسانی دیتابیس
+function updateDatabase() {
+    echo "در حال بروزرسانی دیتابیس...\n";
     
-    chmod -R 755 .
-    chmod -R 777 cache/ backups/ logs/
-    
-    if [ $? -eq 0 ]; then
-        print_message "دسترسی‌ها با موفقیت تنظیم شدند" "$GREEN"
-    else
-        print_message "خطا در تنظیم دسترسی‌ها" "$RED"
-        exit 1
-    fi
+    try {
+        $pdo = new PDO(
+            "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME,
+            DB_USER,
+            DB_PASS,
+            array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'")
+        );
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        
+        // اجرای فایل‌های SQL بروزرسانی
+        $sqlFiles = glob(__DIR__ . '/sql/*.sql');
+        foreach ($sqlFiles as $file) {
+            $sql = file_get_contents($file);
+            $pdo->exec($sql);
+        }
+        
+        echo "دیتابیس با موفقیت بروزرسانی شد.\n";
+    } catch(PDOException $e) {
+        die("خطا در بروزرسانی دیتابیس: " . $e->getMessage() . "\n");
+    }
 }
 
-# تابع بروزرسانی دیتابیس
-update_database() {
-    print_message "در حال بروزرسانی دیتابیس..." "$YELLOW"
+// تابع اصلی بروزرسانی
+function update() {
+    checkRoot();
+    backupFiles();
+    updateCode();
+    updateDependencies();
+    clearCache();
+    setPermissions();
+    updateDatabase();
     
-    php install/update.php
-    
-    if [ $? -eq 0 ]; then
-        print_message "دیتابیس با موفقیت بروزرسانی شد" "$GREEN"
-    else
-        print_message "خطا در بروزرسانی دیتابیس" "$RED"
-        exit 1
-    fi
+    echo "\nبروزرسانی با موفقیت انجام شد!\n";
 }
 
-# تابع اصلی بروزرسانی
-update() {
-    check_root
-    backup_files
-    update_code
-    update_dependencies
-    clear_cache
-    set_permissions
-    update_database
-    
-    print_message "بروزرسانی با موفقیت انجام شد!" "$GREEN"
-}
-
-# اجرای تابع بروزرسانی
-update 
+// اجرای بروزرسانی
+update(); 
