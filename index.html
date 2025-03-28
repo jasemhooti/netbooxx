@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مدیریت پنل XUI</title>
+    <link rel="stylesheet" href="assets/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <img src="assets/logo.png" alt="لوگو">
+            </div>
+            <ul class="nav-links">
+                <li><a href="#home">خانه</a></li>
+                <li><a href="#packages">پکیج‌ها</a></li>
+                <li><a href="#about">درباره ما</a></li>
+                <li><a href="#contact">تماس با ما</a></li>
+                <li><a href="pay/" class="btn-primary">خرید اشتراک</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="home" class="hero">
+            <div class="hero-content">
+                <h1>مدیریت پنل XUI</h1>
+                <p>راه‌حل جامع برای مدیریت پنل‌های XUI با قابلیت‌های پیشرفته</p>
+                <a href="pay/" class="btn-primary">شروع کنید</a>
+            </div>
+        </section>
+
+        <section id="packages" class="packages">
+            <h2>پکیج‌های اشتراک</h2>
+            <div class="package-grid">
+                <div class="package-card">
+                    <h3>پکیج پایه</h3>
+                    <div class="price">50,000 تومان</div>
+                    <ul>
+                        <li>10 گیگابایت ترافیک</li>
+                        <li>30 روز اعتبار</li>
+                        <li>1 دستگاه همزمان</li>
+                    </ul>
+                    <a href="pay/?package=basic" class="btn-secondary">انتخاب</a>
+                </div>
+                <div class="package-card featured">
+                    <h3>پکیج حرفه‌ای</h3>
+                    <div class="price">100,000 تومان</div>
+                    <ul>
+                        <li>50 گیگابایت ترافیک</li>
+                        <li>30 روز اعتبار</li>
+                        <li>3 دستگاه همزمان</li>
+                    </ul>
+                    <a href="pay/?package=pro" class="btn-primary">انتخاب</a>
+                </div>
+                <div class="package-card">
+                    <h3>پکیج نامحدود</h3>
+                    <div class="price">200,000 تومان</div>
+                    <ul>
+                        <li>ترافیک نامحدود</li>
+                        <li>30 روز اعتبار</li>
+                        <li>5 دستگاه همزمان</li>
+                    </ul>
+                    <a href="pay/?package=unlimited" class="btn-secondary">انتخاب</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="about">
+            <h2>درباره ما</h2>
+            <div class="about-content">
+                <p>ما ارائه دهنده خدمات مدیریت پنل‌های XUI با بیش از 5 سال تجربه هستیم. هدف ما ارائه بهترین خدمات با قیمت مناسب به مشتریان عزیز است.</p>
+                <div class="features">
+                    <div class="feature">
+                        <i class="fas fa-shield-alt"></i>
+                        <h3>امنیت بالا</h3>
+                        <p>استفاده از آخرین تکنولوژی‌های امنیتی</p>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <h3>سرعت بالا</h3>
+                        <p>سرورهای قدرتمند با پایداری 99.9%</p>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-headset"></i>
+                        <h3>پشتیبانی 24/7</h3>
+                        <p>پشتیبانی فنی در تمام ساعات شبانه روز</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="contact">
+            <h2>تماس با ما</h2>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <div class="info-item">
+                        <i class="fas fa-envelope"></i>
+                        <p>support@example.com</p>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-phone"></i>
+                        <p>021-12345678</p>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <p>تهران، ایران</p>
+                    </div>
+                </div>
+                <form class="contact-form">
+                    <input type="text" placeholder="نام و نام خانوادگی" required>
+                    <input type="email" placeholder="ایمیل" required>
+                    <textarea placeholder="پیام شما" required></textarea>
+                    <button type="submit" class="btn-primary">ارسال پیام</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>درباره ما</h3>
+                <p>ارائه دهنده خدمات مدیریت پنل‌های XUI با کیفیت بالا و قیمت مناسب</p>
+            </div>
+            <div class="footer-section">
+                <h3>لینک‌های سریع</h3>
+                <ul>
+                    <li><a href="#home">خانه</a></li>
+                    <li><a href="#packages">پکیج‌ها</a></li>
+                    <li><a href="#about">درباره ما</a></li>
+                    <li><a href="#contact">تماس با ما</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>تماس با ما</h3>
+                <ul>
+                    <li><i class="fas fa-envelope"></i> support@example.com</li>
+                    <li><i class="fas fa-phone"></i> 021-12345678</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 مدیریت پنل XUI. تمامی حقوق محفوظ است.</p>
+        </div>
+    </footer>
+
+    <script src="assets/script.js"></script>
+</body>
+</html> 
